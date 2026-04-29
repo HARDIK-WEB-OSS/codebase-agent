@@ -196,4 +196,4 @@ codebase-agent/
 
 ## License
 
-MIT
+MIT License. Use at your own risk. No warranty expressed or implied.
