@@ -10,9 +10,8 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "codellama:7b")
 OLLAMA_FALLBACK_MODEL = os.getenv("OLLAMA_FALLBACK_MODEL", "mistral:7b")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama3-70b-8192")
-
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama")  # "ollama" | "groq"
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama") 
 
 TORCH_DEVICE = os.getenv("TORCH_DEVICE", "cuda")
 
@@ -37,7 +36,7 @@ SUPPORTED_EXTENSIONS = {
     ".rb", ".php",
 }
 
-APP_ENV = os.getenv("APP_ENV", "development")  # "development" | "production"
+APP_ENV = os.getenv("APP_ENV", "development")
 APP_HOST = os.getenv("APP_HOST", "0.0.0.0")
 APP_PORT = int(os.getenv("APP_PORT", "8000"))
 DEBUG = APP_ENV == "development"
