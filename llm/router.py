@@ -19,3 +19,5 @@ def generate_stream(prompt: str, provider: str | None = None):
     else:
         from llm import ollama_client
         yield from ollama_client.generate_stream(prompt)
+
+
