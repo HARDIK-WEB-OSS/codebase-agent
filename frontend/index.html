@@ -6,71 +6,91 @@
 <title>Codebase Agent</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0f;--surface:#111118;--border:#1e1e2e;--border-bright:#2a2a3e;--text:#c9d1e0;--text-dim:#5a6278;--text-bright:#eef1f7;--accent:#7c6af5;--accent-dim:#3d3580;--green:#4ade80;--red:#f87171;--cyan:#22d3ee;--mono:'JetBrains Mono',monospace;--sans:'Syne',sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;height:100vh;display:grid;grid-template-rows:48px 1fr;grid-template-columns:280px 1fr;overflow:hidden}
-header{grid-column:1/-1;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px}
-.logo{font-family:var(--sans);font-weight:800;font-size:15px;color:var(--text-bright)}
-.logo span{color:var(--accent)}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text-dim);margin-left:auto;transition:background .3s}
-.status-dot.online{background:var(--green);box-shadow:0 0 8px var(--green)}
-.status-label{font-size:11px;color:var(--text-dim);margin-left:6px}
-aside{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-section{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
-.sidebar-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
-.ingest-form{display:flex;flex-direction:column;gap:8px}
-input[type=text]{background:var(--bg);border:1px solid var(--border-bright);border-radius:4px;color:var(--text-bright);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none;width:100%;transition:border-color .2s}
-input[type=text]:focus{border-color:var(--accent)}
-input[type=text]::placeholder{color:var(--text-dim)}
-.btn{background:var(--accent-dim);border:1px solid var(--accent);border-radius:4px;color:var(--text-bright);cursor:pointer;font-family:var(--mono);font-size:12px;padding:7px 12px;text-align:center;transition:background .2s}
-.btn:hover{background:var(--accent)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn.secondary{background:transparent;border-color:var(--border-bright);color:var(--text-dim)}
-.btn.secondary:hover{border-color:var(--text-dim);color:var(--text)}
-.repo-list{flex:1;overflow-y:auto;padding:8px 0}
-.repo-item{display:flex;align-items:center;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;gap:8px}
-.repo-item:hover{background:rgba(124,106,245,.06);border-left-color:var(--border-bright)}
-.repo-item.active{background:rgba(124,106,245,.12);border-left-color:var(--accent)}
-.repo-name{font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.repo-chunks{font-size:10px;color:var(--text-dim)}
-.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-size:10px;color:var(--text-dim)}
-main{display:grid;grid-template-rows:1fr 120px;overflow:hidden}
-#chat{overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:20px}
-.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text-dim);text-align:center}
-.empty-icon{font-size:40px;opacity:.3}
-.empty-title{font-family:var(--sans);font-size:20px;font-weight:700;color:var(--text);opacity:.5}
-.hint{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:8px 14px;font-size:12px;cursor:pointer;transition:border-color .2s,color .2s;color:var(--text-dim)}
-.hint:hover{border-color:var(--accent);color:var(--text)}
-.message{display:flex;flex-direction:column;gap:6px;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.message-header{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-dim)}
-.message-role{font-weight:500;text-transform:uppercase;letter-spacing:.8px;font-size:10px}
-.message-role.user{color:var(--cyan)}
-.message-role.agent{color:var(--accent)}
-.message-body{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
-.message.user .message-body{background:rgba(124,106,245,.08);border-color:rgba(124,106,245,.2);color:var(--text-bright)}
-.message-meta{font-size:10px;color:var(--text-dim);display:flex;gap:12px}
-.meta-badge{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:2px 6px;font-size:10px}
-.typing-indicator{display:flex;gap:4px;padding:4px 0}
-.typing-indicator span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
-.typing-indicator span:nth-child(2){animation-delay:.2s}
-.typing-indicator span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-.input-area{border-top:1px solid var(--border);background:var(--surface);padding:14px 24px;display:flex;flex-direction:column;gap:8px}
-.input-row{display:flex;gap:8px;align-items:flex-end}
-textarea{background:var(--bg);border:1px solid var(--border-bright);border-radius:6px;color:var(--text-bright);font-family:var(--mono);font-size:13px;line-height:1.5;padding:10px 14px;outline:none;resize:none;flex:1;transition:border-color .2s;max-height:80px}
-textarea:focus{border-color:var(--accent)}
-textarea::placeholder{color:var(--text-dim)}
-.input-actions{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-dim)}
-.current-repo-name{color:var(--accent);font-weight:500}
-.progress-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-top:4px}
-.progress-fill{height:100%;background:var(--accent);width:0%;transition:width .3s}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border-bright);border-radius:6px;padding:10px 16px;font-size:12px;animation:slideIn .2s ease;z-index:100;max-width:320px}
-.toast.success{border-color:var(--green);color:var(--green)}
-.toast.error{border-color:var(--red);color:var(--red)}
-@keyframes slideIn{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:2px}
+:root {
+    --bg: #0d0d12;
+    --surface: #15151e;
+    --border: #313244;
+    --border-bright: #45475a;
+    --text: #cdd6f4;
+    --text-dim: #a6adc8;
+    --text-bright: #ffffff;
+    --accent: #00ff66;
+    --accent-dim: rgba(0, 255, 102, 0.1);
+    --green: #00ff66;
+    --red: #f38ba8;
+    --cyan: #89b4fa;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 13px; height: 100vh; display: grid; grid-template-rows: 48px 1fr; grid-template-columns: 280px 1fr; overflow: hidden; }
+header { grid-column: 1 / -1; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 16px; }
+.logo { font-family: var(--sans); font-weight: 800; font-size: 15px; color: var(--text-bright); }
+.logo span { color: var(--accent); text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim); margin-left: auto; transition: background .3s; }
+.status-dot.online { background: var(--green); animation: pulse 2s infinite; box-shadow: 0 0 8px var(--green); }
+.status-label { font-size: 11px; color: var(--text-dim); margin-left: 6px; }
+aside { background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-section { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); }
+.sidebar-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
+.ingest-form { display: flex; flex-direction: column; gap: 8px; }
+input[type=text], textarea { background: var(--bg); border: 1px solid var(--border-bright); border-radius: 4px; color: var(--text-bright); font-family: var(--mono); font-size: 12px; padding: 7px 10px; outline: none; width: 100%; transition: all .2s ease; }
+textarea { font-size: 13px; line-height: 1.5; padding: 10px 14px; resize: none; flex: 1; max-height: 80px; }
+input[type=text]:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 255, 102, 0.2); }
+input[type=text]::placeholder, textarea::placeholder { color: var(--text-dim); }
+.btn { background: transparent; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); cursor: pointer; font-family: var(--mono); font-size: 12px; padding: 7px 12px; text-align: center; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; transition: all .2s ease; }
+.btn:hover:not(:disabled) { background: var(--accent); color: var(--bg); box-shadow: 0 0 15px rgba(0, 255, 102, 0.5); transform: translateY(-1px); }
+.btn:disabled { opacity: .4; cursor: not-allowed; border-color: var(--text-dim); color: var(--text-dim); box-shadow: none; transform: none; }
+.btn.secondary { border-color: var(--border-bright); color: var(--text-dim); }
+.btn.secondary:hover:not(:disabled) { border-color: var(--text); color: var(--text); background: transparent; box-shadow: none; }
+.repo-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.repo-item { display: flex; align-items: center; padding: 8px 16px; cursor: pointer; border-left: 2px solid transparent; transition: all .15s; gap: 8px; }
+.repo-item:hover { background: rgba(255, 255, 255, 0.05); }
+.repo-item.active { background: var(--bg); border-left-color: var(--accent); }
+.repo-name { font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repo-chunks { font-size: 10px; color: var(--text-dim); }
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text-dim); }
+main { display: grid; grid-template-rows: 1fr 120px; overflow: hidden; }
+#chat { overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text-dim); text-align: center; }
+.empty-icon { font-size: 40px; opacity: .3; }
+.empty-title { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--text); opacity: .5; }
+.hint { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 8px 14px; font-size: 12px; cursor: pointer; transition: border-color .2s, color .2s; color: var(--text-dim); }
+.hint:hover { border-color: var(--accent); color: var(--text); }
+.message { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px; border-radius: 6px; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); transition: transform 0.2s ease; margin-bottom: 16px; }
+.message:hover { transform: translateY(-2px); }
+.message.user { background: transparent; border: 1px solid var(--border); border-left: 3px solid var(--cyan); align-self: flex-end; width: fit-content; max-width: 85%; }
+.message.agent { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); box-shadow: 0 4px 15px rgba(0, 255, 102, 0.05); align-self: flex-start; width: 100%; }
+.message-header { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.message-role { font-weight: 700; text-transform: uppercase; letter-spacing: .8px; font-size: 10px; }
+.message-role.user { color: var(--cyan); }
+.message-role.agent { color: var(--accent); text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
+.message-body { line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+.message.user .message-body { color: var(--text-bright); }
+.message-meta { font-size: 10px; color: var(--text-dim); display: flex; gap: 12px; margin-top: 4px; }
+.meta-badge { background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 2px 6px; font-size: 10px; }
+.typing-indicator { display: flex; gap: 4px; padding: 4px 0; }
+.typing-indicator span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s infinite; }
+.typing-indicator span:nth-child(2) { animation-delay: .2s; }
+.typing-indicator span:nth-child(3) { animation-delay: .4s; }
+.input-area { border-top: 1px solid var(--border); background: var(--surface); padding: 14px 24px; display: flex; flex-direction: column; gap: 8px; }
+.input-row { display: flex; gap: 8px; align-items: flex-end; }
+.input-actions { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-dim); }
+.current-repo-name { color: var(--accent); font-weight: 500; }
+.progress-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-top: 4px; }
+.progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width .3s; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border-bright); border-radius: 6px; padding: 10px 16px; font-size: 12px; animation: slideIn .2s ease; z-index: 100; max-width: 320px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.toast.success { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(0,255,102,0.1); }
+.toast.error { border-color: var(--red); color: var(--red); box-shadow: 0 0 10px rgba(243,139,168,0.1); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+@keyframes slideUpFade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-5px); opacity: 1; } }
+@keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
 </head>
 <body>
@@ -120,22 +140,218 @@ textarea::placeholder{color:var(--text-dim)}
   </div>
 </main>
 <script>
-const API='';
-let activeRepo=null;
-const HINTS=['How does authentication work?','Where is the database connection initialized?','What does the main entry point do?','Which functions handle HTTP routing?'];
-async function init(){await checkHealth();await loadRepos();renderHints();setInterval(checkHealth,15000)}
-async function checkHealth(){try{const r=await fetch(`${API}/health`);const ok=r.ok;document.getElementById('statusDot').className='status-dot '+(ok?'online':'');document.getElementById('statusLabel').textContent=ok?'online':'offline';if(ok){const d=await r.json();document.getElementById('providerLabel').textContent=`provider: ${d.config?.llm_provider||'unknown'}`}}catch{document.getElementById('statusDot').className='status-dot';document.getElementById('statusLabel').textContent='offline'}}
-function renderHints(){const el=document.getElementById('hintList');HINTS.forEach(h=>{const d=document.createElement('div');d.className='hint';d.textContent=`"${h}"`;d.onclick=()=>{document.getElementById('questionInput').value=h;document.getElementById('questionInput').focus()};el.appendChild(d)})}
-async function loadRepos(){try{const r=await fetch(`${API}/ingest/repos`);const d=await r.json();renderRepoList(d.repos||[])}catch{}}
-function renderRepoList(repos){const el=document.getElementById('repoList');if(!repos.length){el.innerHTML='<div style="padding:8px 16px;font-size:11px;color:var(--text-dim)">No repos yet</div>';return}el.innerHTML='';repos.forEach(repo=>{const d=document.createElement('div');d.className='repo-item'+(repo.repo_name===activeRepo?' active':'');d.innerHTML=`<span style="font-size:10px;color:var(--accent)">◆</span><span class="repo-name">${repo.repo_name}</span><span class="repo-chunks">${repo.chunks}c</span>`;d.onclick=()=>selectRepo(repo.repo_name,d);el.appendChild(d)})}
-function selectRepo(name,el){activeRepo=name;document.querySelectorAll('.repo-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');document.getElementById('currentRepoName').textContent=name}
-async function ingestRepo(force=false){const url=document.getElementById('repoUrl').value.trim();if(!url)return;const bar=document.getElementById('progressBar');const fill=document.getElementById('progressFill');bar.style.display='block';fill.style.width='20%';try{fill.style.width='60%';const r=await fetch(`${API}/ingest/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({github_url:url,force})});fill.style.width='100%';const d=await r.json();if(r.ok){showToast(`✓ ${d.repo_name} — ${d.chunks_indexed} chunks indexed`,'success');document.getElementById('repoUrl').value='';await loadRepos()}else showToast(`✗ ${d.detail}`,'error')}catch(e){showToast(`✗ ${e.message}`,'error')}finally{setTimeout(()=>{bar.style.display='none';fill.style.width='0%'},800)}}
-function handleKeyDown(e){if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();sendQuery()}}
-async function sendQuery(){const input=document.getElementById('questionInput');const question=input.value.trim();if(!question)return;if(!activeRepo){showToast('Select a repo first','error');return}const sendBtn=document.getElementById('sendBtn');sendBtn.disabled=true;input.value='';document.getElementById('emptyState')?.remove();appendMessage('user',question);const thinking=appendThinking();try{const r=await fetch(`${API}/query/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({repo_name:activeRepo,question,n_chunks:8})});const d=await r.json();thinking.remove();if(r.ok)appendMessage('agent',d.answer,{model:d.model_used,chunks:d.chunks_used});else appendMessage('agent',`Error: ${d.detail}`)}catch(e){thinking.remove();appendMessage('agent',`Error: ${e.message}`)}finally{sendBtn.disabled=false}}
-function appendMessage(role,text,meta=null){const chat=document.getElementById('chat');const div=document.createElement('div');div.className=`message ${role}`;div.innerHTML=`<div class="message-header"><span class="message-role ${role}">${role==='user'?'▸ you':'◈ agent'}</span></div><div class="message-body">${escapeHtml(text)}</div>${meta?`<div class="message-meta"><span class="meta-badge">model: ${meta.model}</span><span class="meta-badge">chunks: ${meta.chunks}</span></div>`:''}`;chat.appendChild(div);chat.scrollTop=chat.scrollHeight;return div}
-function appendThinking(){const chat=document.getElementById('chat');const div=document.createElement('div');div.className='message agent';div.innerHTML=`<div class="message-header"><span class="message-role agent">◈ agent</span></div><div class="message-body"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;chat.appendChild(div);chat.scrollTop=chat.scrollHeight;return div}
-function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function showToast(msg,type=''){const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3500)}
+const API = '';
+let activeRepo = null;
+const HINTS = [
+    'How does authentication work?',
+    'Where is the database connection initialized?',
+    'What does the main entry point do?',
+    'Which functions handle HTTP routing?'
+];
+async function init() {
+    await checkHealth();
+    await loadRepos();
+    renderHints();
+    setInterval(checkHealth, 15000);
+}
+async function checkHealth() {
+    try {
+        const r = await fetch(`${API}/health`);
+        const ok = r.ok;
+        document.getElementById('statusDot').className = 'status-dot ' + (ok ? 'online' : '');
+        document.getElementById('statusLabel').textContent = ok ? 'online' : 'offline';
+        
+        if (ok) {
+            const d = await r.json();
+            document.getElementById('providerLabel').textContent = `provider: ${d.config?.llm_provider || 'unknown'}`;
+        }
+    } catch {
+        document.getElementById('statusDot').className = 'status-dot';
+        document.getElementById('statusLabel').textContent = 'offline';
+    }
+}
+function renderHints() {
+    const el = document.getElementById('hintList');
+    HINTS.forEach(h => {
+        const d = document.createElement('div');
+        d.className = 'hint';
+        d.textContent = `"${h}"`;
+        d.onclick = () => {
+            document.getElementById('questionInput').value = h;
+            document.getElementById('questionInput').focus();
+        };
+        el.appendChild(d);
+    });
+}
+async function loadRepos() {
+    try {
+        const r = await fetch(`${API}/ingest/repos`);
+        const d = await r.json();
+        renderRepoList(d.repos || []);
+    } catch {}
+}
+function renderRepoList(repos) {
+    const el = document.getElementById('repoList');
+    if (!repos.length) {
+        el.innerHTML = '<div style="padding:8px 16px;font-size:11px;color:var(--text-dim)">No repos yet</div>';
+        return;
+    }
+    
+    el.innerHTML = '';
+    repos.forEach(repo => {
+        const d = document.createElement('div');
+        d.className = 'repo-item' + (repo.repo_name === activeRepo ? ' active' : '');
+        d.innerHTML = `
+            <span style="font-size:10px;color:var(--accent)">◆</span>
+            <span class="repo-name">${repo.repo_name}</span>
+            <span class="repo-chunks">${repo.chunks}c</span>
+        `;
+        d.onclick = () => selectRepo(repo.repo_name, d);
+        el.appendChild(d);
+    });
+}
+function selectRepo(name, el) {
+    activeRepo = name;
+    document.querySelectorAll('.repo-item').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('currentRepoName').textContent = name;
+}
+async function ingestRepo(force = false) {
+    const url = document.getElementById('repoUrl').value.trim();
+    if (!url) return;
+    
+    const bar = document.getElementById('progressBar');
+    const fill = document.getElementById('progressFill');
+    bar.style.display = 'block';
+    fill.style.width = '20%';
+    
+    try {
+        fill.style.width = '60%';
+        const r = await fetch(`${API}/ingest/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ github_url: url, force })
+        });
+        fill.style.width = '100%';
+        const d = await r.json();
+        
+        if (r.ok) {
+            showToast(`✓ ${d.repo_name} — ${d.chunks_indexed} chunks indexed`, 'success');
+            document.getElementById('repoUrl').value = '';
+            await loadRepos();
+        } else {
+            showToast(`✗ ${d.detail}`, 'error');
+        }
+    } catch (e) {
+        showToast(`✗ ${e.message}`, 'error');
+    } finally {
+        setTimeout(() => {
+            bar.style.display = 'none';
+            fill.style.width = '0%';
+        }, 800);
+    }
+}
+function handleKeyDown(e) {
+    if (e.key === 'Enter' && e.shiftKey) {
+        return;
+    }
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendQuery();
+    }
+}
+async function sendQuery() {
+    const input = document.getElementById('questionInput');
+    const question = input.value.trim();
+    if (!question) return;
+    
+    if (!activeRepo) {
+        showToast('Select a repo first', 'error');
+        return;
+    }
+    
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    input.value = '';
+    document.getElementById('emptyState')?.remove();
+    
+    appendMessage('user', question);
+    const thinking = appendThinking();
+    
+    try {
+        const r = await fetch(`${API}/query/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ repo_name: activeRepo, question, n_chunks: 8 })
+        });
+        const d = await r.json();
+        thinking.remove();
+        
+        if (r.ok) {
+            appendMessage('agent', d.answer, { model: d.model_used, chunks: d.chunks_used });
+        } else {
+            appendMessage('agent', `Error: ${d.detail}`);
+        }
+    } catch (e) {
+        thinking.remove();
+        appendMessage('agent', `Error: ${e.message}`);
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+function appendMessage(role, text, meta = null) {
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+    
+    let metaHtml = '';
+    if (meta) {
+        metaHtml = `
+            <div class="message-meta">
+                <span class="meta-badge">model: ${meta.model}</span>
+                <span class="meta-badge">chunks: ${meta.chunks}</span>
+            </div>
+        `;
+    }
+    
+    div.innerHTML = `
+        <div class="message-header">
+            <span class="message-role ${role}">${role === 'user' ? '▸ you' : '◈ agent'}</span>
+        </div>
+        <div class="message-body">${escapeHtml(text)}</div>
+        ${metaHtml}
+    `;
+    
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
+}
+function appendThinking() {
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className = 'message agent';
+    div.innerHTML = `
+        <div class="message-header">
+            <span class="message-role agent">◈ agent</span>
+        </div>
+        <div class="message-body">
+            <div class="typing-indicator"><span></span><span></span><span></span></div>
+        </div>
+    `;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
+}
+function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function showToast(msg, type = '') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+}
 init();
 </script>
 </body>

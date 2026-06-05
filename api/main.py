@@ -5,6 +5,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from config import APP_HOST, APP_PORT, DEBUG, verify_config
 from api.routers import ingest, query
+from config import LLM_PROVIDER
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "online", 
+        "config": {"llm_provider": LLM_PROVIDER}
+    }
 
 app = FastAPI(title="Codebase Onboarding Agent", version="0.1.0", docs_url="/docs" if DEBUG else None)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
