@@ -1,3 +1,11 @@
+---
+title: Codebase Agent
+emoji: 🧠
+colorFrom: gray
+colorTo: purple
+sdk: docker
+pinned: false
+---
 # Codebase Onboarding Agent
 
 > Ingest any GitHub repository. Ask questions. Get answers with exact file paths and line references.
