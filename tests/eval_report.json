@@ -1,0 +1,165 @@
+{
+  "timestamp": "2026-06-13T14:44:13.976738",
+  "repo": "https://github.com/pallets/flask",
+  "basic_metrics": {
+    "total_questions": 15,
+    "successful_queries": 15,
+    "success_rate": "100.0%",
+    "avg_latency_sec": 19.11,
+    "p95_latency_sec": 42.56,
+    "avg_keyword_overlap": 0.479
+  },
+  "ragas_metrics": {},
+  "raw_results": [
+    {
+      "answer": "Flask handles URL routing through the `@app.route()` decorator, which is a shortcut to call `app.add_url_rule()` with the `view_func` argument. \n\nThe `add_url_rule()` function (File: src/flask/sansio/scaffold.py, Line: 368-433) registers a rule for routing incoming requests and building URLs. It takes parameters such as `rule`, `endpoint`, `view_func`, and `options` to define the URL rule and associate it with a view function.\n\nThe `url_for()` function (File: src/flask/app.py, Line: 1102-1222) generates a URL to the given endpoint with the given values. It requires an active request or application context and calls `current_app.url_for()`.\n\nIn the provided context, the URL routing process involves the following steps:\n\n1. Defining a route using the `@app.route()` decorator (File: src/flask/sansio/scaffold.py, Line: 336-365).\n2. Registering the route using `app.add_url_rule()` (File: src/flask/sansio/scaffold.py, Line: 368-433).\n3. Generating a URL to the endpoint using `url_for()` (File: src/flask/app.py, Line: 1102-1222 or File: src/flask/helpers.py, Line: 200-251).\n\nFor example, in File: tests/test_appctx.py, Line: 10-20, a route is defined using `@app.route(\"/\")` and a URL is generated using `flask.url_for(\"index\")`. \n\nHowever, the provided context is insufficient to fully explain how Flask handles URL routing, as it does not include the implementation details of the `add_url_rule()` function and other related functions.",
+      "contexts": [
+        ""
+      ],
+      "latency": 1.84,
+      "status": "ok",
+      "question": "How does Flask handle URL routing?",
+      "ground_truth": "Flask uses a URL map and decorators like @app.route() to register view functions to URL patterns. Internally it uses Werkzeug's routing system."
+    },
+    {
+      "answer": "The application context in Flask is an instance of the `AppContext` class, which is defined in `src/flask/ctx.py` at lines 260-525. \n\nIt can be created using the `app_context` method of the `Flask` class, defined in `src/flask/app.py` at lines 1481-1499. \n\nHere is how you can create an application context:\n```python\nfrom flask import Flask\napp = Flask(__name__)\nwith app.app_context():\n    # code to run with application context\n```",
+      "contexts": [
+        ""
+      ],
+      "latency": 24.25,
+      "status": "ok",
+      "question": "What is the application context in Flask?",
+      "ground_truth": "The application context pushes a copy of the application object so extensions and code can access it without passing the app around. It is managed via current_app and g proxies."
+    },
+    {
+      "answer": "Flask manages request context through the `AppContext` class, which is defined in `src/flask/ctx.py` (Line: 260-525). \n\nWhen a request is made, an `AppContext` object is created with the request data using the `from_environ` method (File: `src/flask/ctx.py`, Line: 340-348). This context is then pushed at the beginning of each request and CLI command, and popped at the end.\n\nThe `AppContext` class provides methods such as `request` (File: `src/flask/ctx.py`, Line: 371-379) to access the request object associated with the context, and `has_request` (File: `src/flask/ctx.py`, Line: 351-353) to check if the context was created with request data.\n\nAdditionally, Flask provides functions such as `request_context` (File: `src/flask/app.py`, Line: 1501-1515) and `test_request_context` (File: `src/flask/app.py`, Line: 1517-1564) to create an `AppContext` with request information, and `app_context` (File: `src/flask/app.py`, Line: 1481-1499) to create an `AppContext` without request information.\n\nThe context is also used to manage the request and application data, such as the session data, which is loaded the first time it is accessed (as mentioned in the `AppContext` docstring, File: `src/flask/ctx.py`, Line: 260-525).\n\nWhen the context is popped, it will evaluate all the teardown functions registered with `teardown_request` (if handling a request) and then `teardown_appcontext` (File: `src/flask/ctx.py`, Line: 260-525). \n\nIn summary, Flask manages request context through the `AppContext` class and its associated methods, which provide a way to access and manage the request and application data during a request.",
+      "contexts": [
+        ""
+      ],
+      "latency": 20.82,
+      "status": "ok",
+      "question": "How does Flask manage request context?",
+      "ground_truth": "Flask pushes a request context for each incoming request containing the request and session proxy objects. It is pushed at the start of the request and popped after the response."
+    },
+    {
+      "answer": "The provided context is insufficient to determine the purpose of the 'g' object in Flask. The 'g' object is not mentioned in the given code snippets. \n\nTo provide an accurate answer, more context or information about the 'g' object in Flask is required. Typically, the 'g' object in Flask is used as a special object that is used for storing data that should be available for the duration of the request. It is a part of the application context and is used to store and share data between different parts of the application during a single request. \n\nFor more information, you can refer to the Flask documentation, specifically the section on the application context (File: src/flask/globals.py).",
+      "contexts": [
+        ""
+      ],
+      "latency": 42.56,
+      "status": "ok",
+      "question": "What is the purpose of the g object in Flask?",
+      "ground_truth": "g is a namespace object on the application context used to store data during a request. It is reset after each request and is used to store things like database connections."
+    },
+    {
+      "answer": "Flask handles blueprints through the `Blueprint` class, which is defined in `src/flask/sansio/blueprints.py` (Line 119-692). \n\nA blueprint is an object that allows defining application functions without requiring an application object ahead of time. It uses the same decorators as `Flask`, but defers the need for an application by recording them for later registration.\n\nTo register a blueprint, Flask provides the `register_blueprint` function, which is defined in `src/flask/sansio/app.py` (Line 570-595). This function calls the blueprint's `register` method after recording the blueprint in the application's `blueprints`.\n\nThe `Blueprint` class has several methods, including `__init__`, `record`, `record_once`, `make_setup_state`, and `register`, which are used to manage the blueprint's registration and setup. \n\nAdditionally, Flask provides other functions and classes related to blueprints, such as `blueprint` in `src/flask/wrappers.py` (Line 162-178), `from_blueprint` in `src/flask/sansio/blueprints.py` (Line 664-665), and `blueprints` in `src/flask/wrappers.py` (Line 181-195).\n\nOverall, Flask's blueprint handling allows for modular and flexible application development, enabling developers to organize their code into reusable and registerable components. \n\nFor more information, see the docstring in `src/flask/sansio/blueprints.py` (Line 119-692) and the `:doc:`/blueprints` documentation.",
+      "contexts": [
+        ""
+      ],
+      "latency": 5.35,
+      "status": "ok",
+      "question": "How does Flask handle blueprints?",
+      "ground_truth": "Blueprints allow splitting an application into reusable components. They record operations to be executed when registered on an application using app.register_blueprint()."
+    },
+    {
+      "answer": "Flask's template rendering works as follows: \n\nWhen `flask.render_template` is called (src/flask/templating.py, Line: 136-148), it first gets the current application context using `app_ctx._get_current_object()` and then retrieves or selects the template using `ctx.app.jinja_env.get_or_select_template(template_name_or_list)`.\n\nIt then calls the `_render` function (src/flask/templating.py, Line: 123-133) with the application context, template, and context. \n\nIn the `_render` function, it updates the template context (src/flask/templating.py, Line: 125), sends a signal before rendering the template (src/flask/templating.py, Line: 126), renders the template using `template.render(context)` (src/flask/templating.py, Line: 127), sends a signal after rendering the template (src/flask/templating.py, Line: 128), and finally returns the rendered template (src/flask/templating.py, Line: 129).\n\nThis process can be seen in various test cases, such as in `tests/test_templating.py` (Line: 17-18, 338-339, 352-353, 311-312, 325-326, 429-437), where `flask.render_template` is used to render different templates with varying contexts. \n\nHowever, the exact details of how the template is rendered, such as how the template engine (Jinja2) works, are not provided in the given context.",
+      "contexts": [
+        ""
+      ],
+      "latency": 11.47,
+      "status": "ok",
+      "question": "How does Flask's template rendering work?",
+      "ground_truth": "Flask uses Jinja2 as its template engine. render_template() loads templates from the templates folder and renders them with provided context variables."
+    },
+    {
+      "answer": "When a Flask app starts up, it creates an instance of the `Flask` class (File: src/flask/app.py, Line: 109-1625). The `__init__` method of the `Flask` class is called, which initializes the app with the provided parameters, such as the import name, static folder, and template folder.\n\nAs seen in the `__init__` method of the `Flask` class (File: src/flask/app.py, Line: 109), the app is initialized with the provided parameters, and the `app_context` method (File: src/flask/app.py, Line: 1481-1499) is used to create an `AppContext` object, which makes the `current_app` and `g` objects available.\n\nAdditionally, when the app is started using the `flask` CLI command, the `load_app` function (File: src/flask/cli.py, Line: 333-372) is called to load the app instance. If the app is not yet loaded, it will be loaded and returned by this function.\n\nThe `make_context` function (File: src/flask/cli.py, Line: 657-676) is also used to create a context for the app, which is used to run the app.\n\nOverall, when a Flask app starts up, it initializes the app instance, creates an `AppContext` object, and loads the app instance if necessary. \n\nFor more information, see the `Flask` class documentation (File: src/flask/app.py, Line: 109-1625) and the `load_app` function documentation (File: src/flask/cli.py, Line: 333-372).",
+      "contexts": [
+        ""
+      ],
+      "latency": 29.74,
+      "status": "ok",
+      "question": "What happens when a Flask app starts up?",
+      "ground_truth": "Flask runs WSGI callable which creates the app context, pushes request context, dispatches request to the matched URL rule and view function, then returns response."
+    },
+    {
+      "answer": "Flask handles errors and exceptions through several functions and methods. \n\nWhen an exception occurs, Flask calls the `handle_user_exception` function (src/flask/app.py, Line: 865-895) to handle the exception. This function checks if the exception is an instance of `HTTPException` and if so, it calls the `handle_http_exception` function (src/flask/app.py, Line: 830-863) to handle the HTTP exception.\n\nIf the exception is not an instance of `HTTPException`, the `handle_user_exception` function checks if there is an error handler registered for the exception. If a handler is found, it calls the handler with the exception as an argument. If no handler is found, it raises the exception.\n\nThe `handle_http_exception` function (src/flask/app.py, Line: 830-863) checks if there is an error handler registered for the HTTP exception. If a handler is found, it calls the handler with the exception as an argument. If no handler is found, it returns the exception as a response.\n\nIf an exception is not handled by the `handle_user_exception` or `handle_http_exception` functions, Flask calls the `handle_exception` function (src/flask/app.py, Line: 897-948) to handle the exception. This function logs the exception, sends a signal to indicate that an exception occurred, and returns an `InternalServerError` response.\n\nFlask also provides a decorator `errorhandler` (src/flask/sansio/scaffold.py, Line: 598-639) to register custom error handlers for specific exceptions or error codes.\n\nIn addition, Flask provides a function `finalize_request` (src/flask/app.py, Line: 1021-1051) to finalize the request after an exception has been handled. This function converts the return value from a view function into a response and invokes the postprocessing functions.\n\nOverall, Flask provides a robust error handling mechanism that allows developers to handle exceptions and errors in a flexible and customizable way. \n\nFor example, to handle a 404 error, you can use the `errorhandler` decorator (src/flask/sansio/scaffold.py, Line: 598-639) like this:\n```python\n@app.errorhandler(404)\ndef not_found(e):\n    return \"not found\", 404\n```\nThis will return a \"not found\" message with a 404 status code when a 404 error occurs. \n\nTo handle a custom exception, you can use the `errorhandler` decorator (src/flask/sansio/scaffold.py, Line: 598-639) like this:\n```python\n@app.errorhandler(CustomException)\ndef custom_exception_handler(e):\n    return \"custom exception\", 500\n```\nThis will return a \"custom exception\" message with a 500 status code when a `CustomException` occurs. \n\nNote: The exact file paths and line numbers may vary depending on the version of Flask being used. The above explanation is based on the provided context.",
+      "contexts": [
+        ""
+      ],
+      "latency": 22.54,
+      "status": "ok",
+      "question": "How does Flask handle errors and exceptions?",
+      "ground_truth": "Flask uses errorhandler decorators to register functions for specific HTTP error codes or exception types. Unhandled exceptions return 500 responses."
+    },
+    {
+      "answer": "The provided context does not contain sufficient information to fully describe the Flask application factory pattern. \n\nHowever, based on the given information, it can be inferred that the Flask application factory pattern is related to creating a Flask application instance. \n\nIn `src/flask/app.py` at lines 109-1625, the Flask class is defined, which is used to create a Flask application instance. The docstring explains how to create a Flask instance in the main module or in the `__init__.py` file of a package.\n\nFor a complete description of the Flask application factory pattern, additional context or information from other sources would be required.",
+      "contexts": [
+        ""
+      ],
+      "latency": 34.74,
+      "status": "ok",
+      "question": "What is the Flask application factory pattern?",
+      "ground_truth": "The factory pattern creates the Flask app inside a function, allowing multiple instances with different configs. create_app() function initializes extensions and blueprints."
+    },
+    {
+      "answer": "Flask handles static files by serving them from the `static_folder` directory, which is configured during the initialization of the Flask application (src/flask/app.py, Line: 310-363). \n\nWhen `static_folder` is set, a static route is automatically added using the provided `static_url_path` (src/flask/app.py, Line: 346-355). The `send_static_file` function is used to serve files from the `static_folder` (src/flask/blueprints.py, Line: 82-102 and src/flask/app.py, Line: 392-412).\n\nThe `static_folder` can be configured using the `static_folder` parameter when creating a Flask application (src/flask/app.py, Line: 310-363), and the `static_url_path` can be configured using the `static_url_path` parameter (src/flask/app.py, Line: 310-363).\n\nIf `static_folder` is not set, Flask will not serve static files (src/flask/blueprints.py, Line: 83 and src/flask/app.py, Line: 393). \n\nThe `send_static_file` function checks if `static_folder` is set before serving a file (src/flask/blueprints.py, Line: 83 and src/flask/app.py, Line: 393). If `static_folder` is not set, it raises a `RuntimeError` (src/flask/blueprints.py, Line: 84 and src/flask/app.py, Line: 394).\n\nFlask also provides a `static_url_path` function to get the URL prefix for the static route (src/flask/sansio/scaffold.py, Line: 249-262), and a `has_static_folder` function to check if a static folder is configured (src/flask/sansio/scaffold.py, Line: 224-231). \n\nIn addition, Flask provides a `test_static_files` function to test the serving of static files (tests/test_basic.py, Line: 1422-1429), and a `test_static_folder_with_pathlib_path` function to test the serving of static files with a `pathlib` path (tests/test_basic.py, Line: 1468-1474). \n\nOverall, Flask provides a flexible way to handle static files by allowing configuration of the `static_folder` and `static_url_path`, and providing functions to serve and test static files.",
+      "contexts": [
+        ""
+      ],
+      "latency": 8.53,
+      "status": "ok",
+      "question": "How does Flask handle static files?",
+      "ground_truth": "Flask serves static files from the static folder via the /static URL prefix. url_for('static', filename='...') generates URLs for static assets."
+    },
+    {
+      "answer": "Session management in Flask works as follows: \n\nWhen a request is made, the `open_session` function (src/flask/sessions.py, Line: 249-261) is called to load the session. If the session loading fails, a null session is created using `make_null_session` (not shown in the provided context).\n\nThe session object is stored in the request context and can be accessed through the `session` property (src/flask/ctx.py, Line: 396-403). \n\nAt the end of each request, the `save_session` function (src/flask/sessions.py, Line: 263-270) is called to save the session. The `should_set_cookie` function (src/flask/sessions.py, Line: 233-247) determines whether a `Set-Cookie` header should be set for the session cookie.\n\nThe session can also be modified manually using the `session_transaction` function (src/flask/testing.py, Line: 136-183), which is typically used in testing scenarios.\n\nHowever, the provided context is insufficient to fully understand the session management process, as some functions like `make_null_session` and the implementation of `SessionInterface` are not shown.",
+      "contexts": [
+        ""
+      ],
+      "latency": 12.33,
+      "status": "ok",
+      "question": "How does session management work in Flask?",
+      "ground_truth": "Flask uses signed cookies for client-side sessions using the SECRET_KEY. The session object is a dict-like object that serializes to a secure cookie."
+    },
+    {
+      "answer": "In Flask, `before_request` is a function that is called before each request. It is defined in `src/flask/sansio/scaffold.py` at line 460. \n\nAccording to the docstring at `src/flask/sansio/scaffold.py` line 460, `before_request` is used to register a function to run before each request. This function can be used to perform tasks such as opening a database connection or loading the logged-in user from the session.\n\nAs stated in `src/flask/app.py` at line 1366, if any `before_request` handler returns a non-None value, the value is handled as if it was the return value from the view, and further request handling is stopped. \n\nHere is an example of how to use `before_request` from `src/flask/sansio/scaffold.py` line 460:\n```python\n@app.before_request\ndef load_user():\n    if \"user_id\" in session:\n        g.user = db.session.get(session[\"user_id\"])\n```",
+      "contexts": [
+        ""
+      ],
+      "latency": 13.11,
+      "status": "ok",
+      "question": "What is before_request in Flask?",
+      "ground_truth": "before_request registers functions to run before each request. If it returns a value, the view function is skipped and that value is used as the response."
+    },
+    {
+      "answer": "Flask's test client works by creating an instance of the `FlaskClient` class (defined in `src/flask/testing.py` at line 109-262) when `app.test_client()` is called (defined in `src/flask/app.py` at line 755-811). \n\nThe `test_client` function (at `src/flask/app.py:755`) returns an instance of `FlaskClient` (or a custom client class if `app.test_client_class` is set), which can be used to simulate HTTP requests to the application. \n\nThe `FlaskClient` class inherits from `Client` and adds additional behavior for Flask, such as deferring the cleanup of the request context until the end of a `with` block (as seen in `src/flask/testing.py` at line 249-253).\n\nTo use the test client, you can call `app.test_client()` and then use the returned client object to make requests to your application. For example, you can use the `get` or `post` methods to simulate HTTP requests (as seen in `tests/test_testing.py` at line 270-287).\n\nIt's also important to note that if you are testing for assertions or exceptions in your application code, you must set `app.testing = True` in order for the exceptions to propagate to the test client (as stated in the docstring of `test_client` at `src/flask/app.py:755`). \n\nAdditionally, you can pass optional keyword arguments to `app.test_client()` which will be passed to the `FlaskClient` constructor (as seen in `src/flask/app.py` at line 755-811). \n\nFor more information, you can refer to the documentation of the `FlaskClient` class (at `src/flask/testing.py:109`) and the `test_client` function (at `src/flask/app.py:755`).",
+      "contexts": [
+        ""
+      ],
+      "latency": 10.97,
+      "status": "ok",
+      "question": "How does Flask's test client work?",
+      "ground_truth": "Flask provides a test client via app.test_client() that simulates HTTP requests without running a server. It is used for unit testing views and routes."
+    },
+    {
+      "answer": "The purpose of Flask's config object is to act as a central registry for configuration settings. It is used to store and manage the application's configuration, such as debug mode, secret keys, and other settings. \n\nThis can be seen in the `Config` class initialization in `src/flask/config.py` at lines 94-100, where the `__init__` method is defined. The `Config` object is initialized with a `root_path` and optional `defaults` dictionary.\n\nAdditionally, the `make_config` function in `src/flask/sansio/app.py` at lines 479-493, creates the config attribute by the Flask constructor, indicating that the config should be relative to the instance path or the root path of the application.\n\nThe `from_object` function in `src/flask/config.py` at lines 218-254, updates the config values from a given object, which can be a string or an actual object reference, loading only the uppercase attributes of the module/class.\n\nOverall, the config object plays a crucial role in managing the application's configuration settings, allowing for flexible and customizable configuration management. \n\nSpecifically, the config object is used in the following files and lines:\n- `src/flask/config.py` at lines 20-47, 46-47, 94-100, and 218-254\n- `src/flask/sansio/app.py` at lines 479-493\n- `src/flask/app.py` at lines 109-1625 \n\nHowever, without more context about how the config object is used in the application, it's difficult to provide a more detailed explanation.",
+      "contexts": [
+        ""
+      ],
+      "latency": 18.94,
+      "status": "ok",
+      "question": "What is the purpose of Flask's config object?",
+      "ground_truth": "Flask's config object is a dict subclass that stores configuration variables like DEBUG, SECRET_KEY. It can be loaded from objects, files, or environment variables."
+    },
+    {
+      "answer": "The provided context is insufficient to fully explain how the Flask signal system works. The given code snippets and documentation do not explicitly mention or describe the signal system. \n\nHowever, it's known that Flask uses the Blinker library for its signal system, but there's no mention of it in the given context. To provide a complete answer, more information about the signal system implementation in Flask would be required, specifically in files related to Blinker or signal handling, which are not present in the provided context. \n\nFor example, the implementation of signals might be found in a file like `src/flask/signal.py`, but this file is not included in the given context. Without this information, it's impossible to accurately describe how the Flask signal system works.",
+      "contexts": [
+        ""
+      ],
+      "latency": 29.5,
+      "status": "ok",
+      "question": "How does Flask signal system work?",
+      "ground_truth": "Flask uses Blinker library for signals like request_started and request_finished. Signals allow decoupled components to get notified when actions occur."
+    }
+  ]
+}
